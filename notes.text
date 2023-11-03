@@ -1,0 +1,174 @@
+class User {
+  final String uid;
+  final String email;
+  final String username;
+  final int age;
+
+  User({this.uid, this.email, this.username, this.age});
+}
+
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // create user object based on FirebaseUser
+  User _userFromFirebaseUser(FirebaseUser user) {
+    return user != null ? User(uid: user.uid, email: user.email) : null;
+  }
+
+  // auth change user stream
+  Stream<User> get user {
+    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
+  }
+
+  // register with email and password
+  Future registerWithEmailAndPassword(String email, String password,
+      String username, int age) async {
+    try {
+      AuthResult result = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      FirebaseUser user = result.user;
+
+      // create a new document for the user with the uid
+      await Firestore.instance.collection('users').document(user.uid).setData({
+        'username': username,
+        'age': age,
+      });
+
+      return _userFromFirebaseUser(user);
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
+  }
+}
+//////////////////////////////////////////////////////////
+Sure! Here's a step-by-step guide on how to create a custom register user model on Firebase using Flutter:
+
+Step 1: Set up a new Flutter project
+- Create a new Flutter project using the Flutter CLI or your preferred IDE.
+
+Step 2: Add Firebase to your project
+- Go to the Firebase website (https://firebase.google.com/) and create a new project.
+- Follow the instructions to add Firebase to your Flutter project. This usually involves adding the Firebase configuration files to your project.
+
+Step 3: Set up Firebase Authentication
+- In the Firebase console, go to the Authentication section and enable the desired authentication methods (e.g., email/password, Google Sign-In, etc.).
+
+Step 4: Create a user model
+- Create a new file called 'user_model.dart' or any suitable name.
+- Define a class called 'User' with the necessary properties for your user model. For example:
+
+```dart
+class User {
+  String id;
+  String email;
+  String fullName;
+
+  User({this.id, this.email, this.fullName});
+}
+```
+
+Step 5: Create a registration form
+- Create a new file called 'register_screen.dart' or any suitable name.
+- Create a form with input fields for email, password, and any other desired fields.
+- Add a button to submit the form.
+
+Step 6: Implement registration logic
+- In the 'register_screen.dart' file, import the necessary packages:
+
+```dart
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+```
+
+- In the submit button's onPressed() method, add the following code:
+
+```dart
+void _registerUser() async {
+  try {
+    UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    // Create a new user document in Firestore
+    await FirebaseFirestore.instance.collection('users').doc(userCredential.user.uid).set({
+      'email': emailController.text,
+      'fullName': fullNameController.text,
+    });
+
+    // Navigate to the home screen or any desired screen
+    Navigator.pushReplacementNamed(context, '/home');
+  } catch (e) {
+    // Handle registration errors (e.g., email already in use)
+    print(e);
+  }
+}
+```
+
+Step 7: Connect the registration logic to the form
+- In the 'register_screen.dart' file, add the following code to connect the registration logic to the form:
+
+```dart
+final TextEditingController emailController = TextEditingController();
+final TextEditingController passwordController = TextEditingController();
+final TextEditingController fullNameController = TextEditingController();
+
+@override
+void dispose() {
+  emailController.dispose();
+  passwordController.dispose();
+  fullNameController.dispose();
+  super.dispose();
+}
+
+// Add this code inside the build() method
+Column(
+  children: [
+    // Add your input fields and button here
+    TextField(
+      controller: emailController,
+      decoration: InputDecoration(labelText: 'Email'),
+    ),
+    TextField(
+      controller: passwordController,
+      decoration: InputDecoration(labelText: 'Password'),
+      obscureText: true,
+    ),
+    TextField(
+      controller: fullNameController,
+      decoration: InputDecoration(labelText: 'Full Name'),
+    ),
+    ElevatedButton(
+      onPressed: _registerUser,
+      child: Text('Register'),
+    ),
+  ],
+),
+```
+
+Step 8: Test the registration functionality
+- Run the app on an emulator or a physical device.
+- Fill in the registration form and submit it.
+- Check the Firebase console to verify that a new user document is created in the Firestore collection.
+
+Congratulations! You have successfully created a custom register user model on Firebase using Flutter. Feel free to customize the user model and registration form according to your project's requirements.
+
+Written by Chatsonic
+/////////////////////////////////////////////////////////////////////////////////////////
+It seems that you are getting an error while trying to use Firestore with Flutter. This error is caused by the limitation of the DEX file format, which can only reference up to 64K methods. To solve this problem, you need to enable multidex support in your app. Here are some steps you can follow:
+
+- Open the `android/app/build.gradle` file in your project.
+- Add the following dependency in the `dependencies` section: `implementation 'com.android.support:multidex:1.0.3'`
+- In the `defaultConfig` section, add this line: `multiDexEnabled true`
+- In the `android` section, add this line: `compileOptions { sourceCompatibility JavaVersion.VERSION_1_8 targetCompatibility JavaVersion.VERSION_1_8 }`
+- Save the file and rebuild your app.
+
+You can find more information about multidex and how to enable it in this link¹. I hope this helps you fix the error and use Firestore with Flutter. 😊
+
+Source: Conversation with Bing, 10/28/2023
+(1) android - Error:Cannot fit requested classes in a single dex file.Try .... https://stackoverflow.com/questions/48249633/errorcannot-fit-requested-classes-in-a-single-dex-file-try-supplying-a-main-dex.
+(2) Flutter Firestore causing D8: Cannot fit requested classes in a single .... https://stackoverflow.com/questions/55591958/flutter-firestore-causing-d8-cannot-fit-requested-classes-in-a-single-dex-file.
+(3) [Solved] Cannot fit requested classes in a single dex file. Try .... https://exerror.com/cannot-fit-requested-classes-in-a-single-dex-file-try-supplying-a-main-dex-list/.
+(4) Visual Studio Error Cannot fit requested classes in a single dex file .... https://stackoverflow.com/questions/60108615/visual-studio-error-cannot-fit-requested-classes-in-a-single-dex-file.
+(5) undefined. https://www.youtube.com/watch?v=DqJ_KjFzL9I&list=PLjxrf2q8roU2HdJQDjJzOeO6J3FoFLWr2&index=9.

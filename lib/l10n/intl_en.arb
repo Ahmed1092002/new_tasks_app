@@ -1,0 +1,10 @@
+
+{
+  "@@locale": "en",
+  "dashboardTasks": "DashboardTasks",
+  "newTasks": "New Tasks",
+  "inProgress": "In Progress",
+  "completed": "Completed",
+  "outdated": "Outdated",
+  "goToTasks": "Go to Tasks"
+}

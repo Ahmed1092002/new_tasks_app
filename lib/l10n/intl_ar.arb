@@ -1,0 +1,9 @@
+{
+  "@@locale": "ar",
+  "dashboardTasks": "مهام لوحة المعلومات",
+  "newTasks": "مهام جديدة",
+  "inProgress": "قيد التقدم",
+  "completed": "مكتملة",
+  "outdated": "منتهية الصلاحية",
+  "goToTasks": "الانتقال إلى المهام"
+}

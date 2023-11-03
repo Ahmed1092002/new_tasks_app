@@ -154,7 +154,6 @@ class _AddTodoAppScreanFormState extends State<AddTodoAppScreanForm> {
                         endDate: cubit.endDateController.text,
                         image: cubit.taskImageLink,
                       );
-                      cubit.tasks.clear();
                       cubit.getTaskData();
                     } catch (error) {
                       // Handle error
@@ -173,7 +172,6 @@ class _AddTodoAppScreanFormState extends State<AddTodoAppScreanForm> {
                         taskId: cubit.taskId,
                         image: cubit.taskImageLink,
                       );
-                      cubit.tasks.clear();
                       cubit.getTaskData();
                     } catch (error) {
                       // Handle error

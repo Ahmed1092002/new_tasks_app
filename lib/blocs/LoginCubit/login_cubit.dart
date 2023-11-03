@@ -28,6 +28,7 @@ class LoginCubit extends Cubit<LoginState> {
           await storage.write(key: 'uid', value: value.user!.uid);
           Token =   await storage.read(key: 'uid');
           print (  Token);
+
       emit(LoginSuccessState());
     }).catchError((error) {
       emit(LoginErrorState());

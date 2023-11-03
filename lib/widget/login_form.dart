@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_todo_app/blocs/LoginCubit/login_cubit.dart';
+import 'package:new_todo_app/blocs/UserCubit/user_cubit.dart';
 import 'package:new_todo_app/utils/Nafigator.dart';
 import 'package:new_todo_app/views/dashboard_tasks.dart';
 import 'package:new_todo_app/views/register_screan.dart';
 import 'package:new_todo_app/widget/custom_button.dart';
 import 'package:new_todo_app/widget/custom_text_field.dart';
+
+import '../blocs/TaskCubit/task_cubit.dart';
 
 
 class LoginForm extends StatelessWidget {
@@ -25,6 +28,12 @@ class LoginForm extends StatelessWidget {
           ));
         }
         else if (state is LoginSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("success"),
+            backgroundColor: Colors.green,
+          ));
+          TaskCubit.get(context).getTaskData();
+          UserCubit.get(context).getUserData();
           navigateToScreenAndExit(context, DashboardTasks());
 
         }      },
@@ -38,6 +47,7 @@ class LoginForm extends StatelessWidget {
                   CustomTextField(
                     hint: 'email',
                     controller: cubit.emailController,
+                    icon: Icons.email,
                   ),
                   SizedBox(
                     height: 16,
@@ -45,6 +55,7 @@ class LoginForm extends StatelessWidget {
                   CustomTextField(
                     hint: 'password',
                     controller: cubit.passwordController,
+                    icon: Icons.lock,
                   ),
                   SizedBox(
                     height: 16,

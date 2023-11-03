@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -119,38 +120,51 @@ PostModel postmodel = PostModel(
   List<PostModel> tasks = [];
 
   void getTaskData() async {
-    emit(GetTaskLoadingState());
     Token = await storage.read(key: 'uid');
 
-    try {
-      final taskSnapshot = await FirebaseFirestore.instance.collection('tasks')
-      .where('uid', isEqualTo: Token)
-          .get(
-
-      );
-
-
-
-      taskSnapshot.docs.forEach((element) {
-        print(element.data());
-        // tasks=[]; // Clear the tasks list before populating it again
-
-        tasks.add(PostModel.fromJson(element.data(), element.id));
-        print (tasks.length);
-      });
-
-      totalTaskCount = taskSnapshot.docs.length;
-      print (totalTaskCount);
-      dashboardCalculate();
-
-
-
-      print(taskSnapshot.docs);
-      emit(GetTaskSuccessState());
-    } catch (error) {
-      print(error);
+    if (FirebaseAuth.instance.currentUser!.uid != Token) {
       emit(GetTaskErrorState());
-    }
+      return;
+    } else
+      {
+        tasks=[];
+        newTaskCount = 0;
+        inProgressTaskCount = 0;
+        outDateTaskCount = 0;
+        completeTaskCount = 0;
+
+        emit(GetTaskLoadingState());
+
+        try {
+          final taskSnapshot = await FirebaseFirestore.instance.collection('tasks')
+              .where('uid', isEqualTo: Token)
+              .get(
+
+          );
+
+
+
+          taskSnapshot.docs.forEach((element) {
+            print(element.data());
+
+            tasks.add(PostModel.fromJson(element.data(), element.id));
+            print (tasks.length);
+          });
+
+          totalTaskCount = taskSnapshot.docs.length;
+          print (totalTaskCount);
+          dashboardCalculate();
+
+
+
+          print(taskSnapshot.docs);
+          emit(GetTaskSuccessState());
+        } catch (error) {
+          print(error);
+          emit(GetTaskErrorState());
+        }
+      }
+
   }
 
 
@@ -163,11 +177,15 @@ PostModel postmodel = PostModel(
     newTaskCount =tasks.where((task) => task.states == 'New').length;
     completeTaskCount =tasks.where((task) => task.states == 'Done').length;
     for (int i = 0; i < totalTaskCount; i++) {
-      if (formatter.parse(tasks[i].endDate!).isBefore(now) &&
-          tasks[i].states != 'Done') {
+      if ((formatter.parse(tasks[i].endDate!).isBefore(now) &&
+          tasks[i].states != 'Done') ||
+          tasks[i].states != 'Archive'
+      ) {
         inProgressTaskCount = inProgressTaskCount! + 1;
       }
-      else if (formatter.parse(tasks[i].endDate!).isAfter(now)) {
+      else if (formatter.parse(tasks[i].endDate!).isAfter(now) ||
+          tasks[i].states != 'Archive'
+      ) {
         outDateTaskCount = outDateTaskCount! + 1;
       }
     }

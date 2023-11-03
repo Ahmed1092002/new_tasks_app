@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:new_todo_app/blocs/TaskCubit/task_cubit.dart';
+import 'package:new_todo_app/blocs/UserCubit/user_cubit.dart';
 import 'package:new_todo_app/views/dashboard_tasks.dart';
 import 'package:new_todo_app/views/spalsh_screan.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocListener(
       listeners: [
+        BlocProvider(create: (context) => UserCubit()),
         BlocProvider(create: (context) => TaskCubit()..getTaskData()),
       ],
       child: MaterialApp(

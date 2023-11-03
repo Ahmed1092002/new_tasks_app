@@ -10,6 +10,7 @@ import 'package:new_todo_app/views/login_screan.dart';
 import 'package:new_todo_app/widget/sort_model_sheet.dart';
 
 
+import '../blocs/UserCubit/user_cubit.dart';
 import '../widget/drawer_item.dart';
 import '../widget/todo_item_list.dart';
 
@@ -21,11 +22,23 @@ class TodoAppScrean extends StatefulWidget {
 }
 
 class _TodoAppScreanState extends State<TodoAppScrean> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      TaskCubit.get(context).getTaskData();
+      UserCubit.get(context).getUserData();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TaskCubit, TaskState>(
+    return BlocConsumer<TaskCubit, TaskState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
       builder: (context, state) {
+
         var cubit = TaskCubit.get(context);
         return Scaffold(
           appBar: AppBar(
@@ -37,7 +50,7 @@ class _TodoAppScreanState extends State<TodoAppScrean> {
                 showModalBottomSheet(context: context,
                     builder: (Context) {
                       return SortModelSheet(
-                        pageName: 'Todo App'
+                          pageName: 'Todo App'
                       );
                     });
               },
@@ -47,7 +60,7 @@ class _TodoAppScreanState extends State<TodoAppScrean> {
                 navigateToScreen(context, DashboardTasks());
               },
                   icon: Icon(Icons.login_sharp)),
-              IconButton(onPressed: (){
+              IconButton(onPressed: () {
                 cubit.getTaskData();
               },
                   icon: Icon(Icons.refresh))
@@ -61,9 +74,6 @@ class _TodoAppScreanState extends State<TodoAppScrean> {
               ));
 
               cubit.dismiss();
-
-
-
             },
             backgroundColor: Color(0xFFE040FC),
             child: Icon(Icons.add, color: Colors.white,),
@@ -72,7 +82,6 @@ class _TodoAppScreanState extends State<TodoAppScrean> {
           body: RefreshIndicator(
               onRefresh: () async {
                 await Future.delayed(Duration(seconds: 2));
-TaskCubit.get(context).tasks = [];
                 TaskCubit.get(context).getTaskData();
               },
               edgeOffset: 100,
@@ -85,6 +94,8 @@ TaskCubit.get(context).tasks = [];
 
               child: TodoItemList()),
         );
+
+
       },
     );
   }

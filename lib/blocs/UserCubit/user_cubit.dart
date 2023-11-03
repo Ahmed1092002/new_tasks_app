@@ -20,6 +20,8 @@ class UserCubit extends Cubit<UserState> {
   String? profileImageLink = '';
   var imagePicker = ImagePicker();
   String ?token;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController fullNameController = TextEditingController();
 
   final storage =   FlutterSecureStorage();
 
@@ -53,7 +55,6 @@ class UserCubit extends Cubit<UserState> {
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       profileImage = File(pickedFile.path);
-      uploadProfileImage();
       emit(ProfileImagePickedSuccessState());
 
     } else {
@@ -73,7 +74,7 @@ class UserCubit extends Cubit<UserState> {
         value.ref.getDownloadURL().then((value) {
           print(value);
           profileImageLink = value;
-          updateUserProfile();
+
           emit(uploadProfileImageSuccessState());
         });
       })
@@ -87,35 +88,54 @@ class UserCubit extends Cubit<UserState> {
     }
   }
 
-  updateUserProfile() {
- // user=UserProfile(email: user!.email, fullName: user!.fullName, uid: user!.uid, image: profileImageLink);
-    if (user != null && profileImageLink != null) {
-      emit(UserUpdateLoadingState());
-
-      FirebaseFirestore.instance.collection('users').doc(user!.uid).update(
-          // user!.toJson()
-      {
-
-        'image': profileImageLink,
-      }
-      )
-          .then((value) {
-print('User Updated Successfully');
-print(user!.toJson());
+  updateUserProfile({
+    String? email,
+    String? fullName,
 
 
-        getUserData();
-emit(UserUpdateSuccessState());
+    String?  profileImageLink,
+}) async {
+  user=UserProfile(email: email==null||email==''?user!.email:email,
 
-      })
-          .catchError((error) {
-            print(error);
-        emit(UserUpdateErrorState());
-      });
-    } else {
-      print('User or profile image link is null.');
-      emit(UserUpdateErrorState());
-    }
+
+      fullName: fullName==null||fullName==''?user!.fullName:fullName,
+
+
+      uid: user!.uid,
+
+
+      image: profileImageLink==null||profileImageLink==''? '':profileImageLink,);
+  token=await storage.read(key:'uid' );
+
+
+  emit(UserUpdateLoadingState());
+  if (email != null||email !='' || email != user!.email) {
+    await FirebaseAuth.instance.currentUser!.updateEmail(email!);
+  }
+  FirebaseFirestore.instance.collection('users').doc(token).update(
+
+      user!.toJson()
+  )
+      .then((value) {
+
+    print('User Updated Successfully');
+    print(user!.toJson());
+
+
+    getUserData();
+    emit(UserUpdateSuccessState());
+
+  })
+      .catchError((error) {
+    print(error);
+    emit(UserUpdateErrorState());
+  });
+    // if (user != null && profileImageLink != null) {
+    //
+    // } else {
+    //   print('User or profile image link is null.');
+    //   emit(UserUpdateErrorState());
+    // }
   }
   chanegPassword({required String password}) async {
     emit(ChangePasswordLoadingState());

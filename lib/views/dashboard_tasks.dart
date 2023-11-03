@@ -7,6 +7,7 @@ import 'package:new_todo_app/views/todo_app_screan.dart';
 import 'package:new_todo_app/widget/status_tasks_container.dart';
 
 import '../blocs/TaskCubit/task_cubit.dart';
+import '../blocs/UserCubit/user_cubit.dart';
 import '../generated/l10n.dart';
 import '../utils/Nafigator.dart';
 import '../widget/custom_button.dart';
@@ -20,6 +21,14 @@ class DashboardTasks extends StatefulWidget {
 }
 
 class _DashboardTasksState extends State<DashboardTasks> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     TaskCubit.get(context).getTaskData();
+  //     UserCubit.get(context).getUserData();
+  //   });
+  // }
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TaskCubit, TaskState>(

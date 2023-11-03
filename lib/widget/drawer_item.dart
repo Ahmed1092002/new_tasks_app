@@ -45,58 +45,58 @@ class _DrawerItemState extends State<DrawerItem> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
             ),
-            child: BlocProvider(
-              create: (context) => UserCubit()..getUserData(),
-              child: BlocConsumer<UserCubit, UserState>(
-                listener: (context, state) {
-                  if (state is ProfileImagePickedErrorState) {
-                    UserCubit.get(context).getUserData();
-                  }
-                },
-                builder: (context, state) {
-                  var cubit = UserCubit.get(context).user;
-                  if (cubit == null) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is UserSuccessState) {
-                    return Container(
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 150,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
+            child: BlocConsumer<UserCubit, UserState>(
+              listener: (context, state) {
+                if (state is ProfileImagePickedErrorState) {
+                  UserCubit.get(context).getUserData();
+                }
+              },
+              builder: (context, state) {
+                var cubit = UserCubit.get(context).user;
+                if (cubit == null) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is UserSuccessState) {
+                  return Container(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 150,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
 
-                            ),
-                            clipBehavior: Clip.hardEdge,
-                            child: CachedNetworkImage(
-                              imageUrl: '${cubit.image}',
-                              fit: BoxFit.cover,
-                              fadeInDuration: Duration(seconds: 1),
-                              useOldImageOnUrlChange: true,
-                              placeholderFadeInDuration: Duration(seconds: 1),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          child: cubit.image == null|| cubit.image == ''?
+                          Image.asset(Assets.assetsStateAPILogo)
+                          :
+                            CachedNetworkImage(
+                            imageUrl: '${cubit.image}',
+                            fit: BoxFit.cover,
+                            fadeInDuration: Duration(seconds: 1),
+                            useOldImageOnUrlChange: true,
+                            placeholderFadeInDuration: Duration(seconds: 1),
 
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) {
-                                return Icon(Icons.error);
-                              },
-                            ),
+                            placeholder: (context, url) =>
+                                CircularProgressIndicator(),
+                            errorWidget: (context, url, error) {
+                              return Icon(Icons.error);
+                            },
                           ),
-                          Text(
-                            '${cubit.fullName}',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  return Text('Profile');
-                },
-              ),
+                        ),
+                        Text(
+                          '${cubit.fullName}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return Text('Profile');
+              },
             ),
           ),
           ListTile(

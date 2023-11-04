@@ -21,14 +21,14 @@ class DashboardTasks extends StatefulWidget {
 }
 
 class _DashboardTasksState extends State<DashboardTasks> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     TaskCubit.get(context).getTaskData();
-  //     UserCubit.get(context).getUserData();
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      TaskCubit.get(context).getTaskData();
+      UserCubit.get(context).getUserData();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TaskCubit, TaskState>(
@@ -83,28 +83,28 @@ class _DashboardTasksState extends State<DashboardTasks> {
                       children: [
                         StatusTasksContainer(
                           title: S.of(context).newTasks,
-                          color: Colors.purple,
+                          color: Color(0xFF9C28B1),
                         ),
                         SizedBox(
                           height: 5,
                         ),
                         StatusTasksContainer(
                           title: S.of(context).inProgress,
-                          color: Colors.blue,
+                          color: Color(0xFF2396F2),
                         ),
                         SizedBox(
                           height: 5,
                         ),
                         StatusTasksContainer(
                           title: S.of(context).completed,
-                          color: Colors.greenAccent,
+                          color: Color(0xFF4CB050),
                         ),
                         SizedBox(
                           height: 5,
                         ),
                         StatusTasksContainer(
                           title: S.of(context).outdated,
-                          color: Colors.grey,
+                          color: Color(0xFF424242),
                         ),
                       ],
                     ),

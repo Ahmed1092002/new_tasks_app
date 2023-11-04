@@ -52,7 +52,8 @@ class SpalshScrean extends StatelessWidget {
                 screenFunction: () async {
                   Token = await storage.read(key: 'uid');
 
-                  if (Token == null) {
+                  if (Token == null && FirebaseAuth.instance.currentUser==Token) {
+
                     return LoginScrean();
                   }
                   else {

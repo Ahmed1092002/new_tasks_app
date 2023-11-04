@@ -22,14 +22,14 @@ class TodoAppScrean extends StatefulWidget {
 }
 
 class _TodoAppScreanState extends State<TodoAppScrean> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      TaskCubit.get(context).getTaskData();
-      UserCubit.get(context).getUserData();
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     TaskCubit.get(context).getTaskData();
+  //     UserCubit.get(context).getUserData();
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

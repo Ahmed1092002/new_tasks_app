@@ -19,7 +19,7 @@ class InProgressCircularPercentIndicator extends StatelessWidget {
           radius: 130.0,
           lineWidth: 13.0,
           animation: true,
-          percent: (cubit.inProgressTaskCount! / cubit.tasks.length) ,
+          percent: (cubit.inProgressTaskCount! / cubit.totalTaskCount) ,
           animationDuration: 10,
           addAutomaticKeepAlive: true,
           animateFromLastPercent: true,

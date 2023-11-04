@@ -18,11 +18,11 @@ class OutdatesCircularPercentIndicator extends StatelessWidget {
           radius: 90.0,
           lineWidth: 13.0,
           animation: true,
-          percent: (cubit.outDateTaskCount! / cubit.tasks.length) ,
+          percent: (cubit.outDateTaskCount! / cubit.totalTaskCount) ,
           circularStrokeCap: CircularStrokeCap.round,
-          progressColor: Colors.grey,
+          progressColor: Color(0xFF424242),
           center: Text(
-            '${cubit.tasks.length}Tasks',
+            '${cubit.totalTaskCount}Tasks',
             style: TextStyle(fontSize: 20),
           ),
         );

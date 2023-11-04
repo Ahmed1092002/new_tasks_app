@@ -12,7 +12,6 @@ import 'package:meta/meta.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:new_todo_app/data/post_model.dart';
 import 'package:new_todo_app/data/status_enum.dart';
-import '../../data/user_data.dart';
 import '../../generated/l10n.dart';
 
 part 'task_state.dart';
@@ -28,28 +27,27 @@ class TaskCubit extends Cubit<TaskState> {
   TextEditingController endDateController = TextEditingController();
 
   TextEditingController imageController = TextEditingController();
-String ?sortState;
+  String? sortState;
 
   String? taskStates;
   String? taskId;
 
   File? taskImage;
 
-  String? taskImageLink ='';
- int? newTaskCount = 0;
- int? inProgressTaskCount = 0;
- int? outDateTaskCount = 0;
+  String? taskImageLink = '';
+  int? newTaskCount = 0;
+  int? inProgressTaskCount = 0;
+  int? outDateTaskCount = 0;
 
- int? completeTaskCount = 0;
-  int totalTaskCount =0;
+  int? completeTaskCount = 0;
+  int totalTaskCount = 0;
   var imagePicker = ImagePicker();
- pickProfileImage() async {
+  pickProfileImage() async {
     final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       taskImage = File(pickedFile.path);
 
       emit(ProfileImagePickedSuccessState());
-
     } else {
       print('No image selected.');
       emit(ProfileImagePickedErrorState());
@@ -59,14 +57,17 @@ String ?sortState;
   Future<void> uploadTaskImage() async {
     if (taskImage != null) {
       try {
-        final taskImagePath = 'tasks images/${Uri.file(taskImage!.path).pathSegments.last}';
-        final taskImageRef = firebase_storage.FirebaseStorage.instance.ref().child(taskImagePath);
+        final taskImagePath =
+            'tasks images/${Uri.file(taskImage!.path).pathSegments.last}';
+        final taskImageRef = firebase_storage.FirebaseStorage.instance
+            .ref()
+            .child(taskImagePath);
         final uploadTask = taskImageRef.putFile(taskImage!);
         final snapshot = await uploadTask.whenComplete(() {});
         final downloadUrl = await snapshot.ref.getDownloadURL();
         taskImageLink = downloadUrl;
-        print (downloadUrl);
-        print (taskImageLink);
+        print(downloadUrl);
+        print(taskImageLink);
         emit(uploadTaskImageSuccessState());
       } catch (error) {
         print(error);
@@ -83,23 +84,23 @@ String ?sortState;
     @required String? description,
     @required String? startDate,
     @required String? endDate,
-    String? states ,
-   String? image,
+    String? states,
+    String? image,
     // Add taskImageLink parameter
   }) async {
     Token = await storage.read(key: 'uid');
 
-PostModel postmodel = PostModel(
-  title: title,
-  description: description,
-  uid: Token,
-  image: image,
-  startDate: startDate,
-  endDate: endDate,
-  states: states ??  status.New.name.toString(),
-  id: '',
-  // Add taskImageLink parameter
-);
+    PostModel postmodel = PostModel(
+      title: title,
+      description: description,
+      uid: Token,
+      image: image,
+      startDate: startDate,
+      endDate: endDate,
+      states: states ?? status.New.name.toString(),
+      id: '',
+      // Add taskImageLink parameter
+    );
 
     emit(AddNewTaskLoading());
     try {
@@ -114,7 +115,6 @@ PostModel postmodel = PostModel(
 
       emit(AddNewTaskError());
     }
-
   }
 
   List<PostModel> tasks = [];
@@ -125,137 +125,142 @@ PostModel postmodel = PostModel(
     if (FirebaseAuth.instance.currentUser!.uid != Token) {
       emit(GetTaskErrorState());
       return;
-    } else
-      {
-        tasks=[];
-        newTaskCount = 0;
-        inProgressTaskCount = 0;
-        outDateTaskCount = 0;
-        completeTaskCount = 0;
+    } else {
+      tasks = [];
+      newTaskCount = 0;
+      inProgressTaskCount = 0;
+      outDateTaskCount = 0;
+      completeTaskCount = 0;
 
-        emit(GetTaskLoadingState());
+      emit(GetTaskLoadingState());
 
-        try {
-          final taskSnapshot = await FirebaseFirestore.instance.collection('tasks')
-              .where('uid', isEqualTo: Token)
-              .get(
+      try {
+        final taskSnapshot = await FirebaseFirestore.instance
+            .collection('tasks')
+            .where('uid', isEqualTo: Token)
+            .get();
 
-          );
+        taskSnapshot.docs.forEach((element) {
+          print(element.data());
 
+          tasks.add(PostModel.fromJson(element.data(), element.id));
+        });
 
+        totalTaskCount = taskSnapshot.docs.length;
 
-          taskSnapshot.docs.forEach((element) {
-            print(element.data());
+        dashboardCalculate();
 
-            tasks.add(PostModel.fromJson(element.data(), element.id));
-            print (tasks.length);
-          });
-
-          totalTaskCount = taskSnapshot.docs.length;
-          print (totalTaskCount);
-          dashboardCalculate();
-
-
-
-          print(taskSnapshot.docs);
-          emit(GetTaskSuccessState());
-        } catch (error) {
-          print(error);
-          emit(GetTaskErrorState());
-        }
-      }
-
-  }
-
-
-  dashboardCalculate(){
-    DateTime now = DateTime.now();
-    DateFormat formatter = DateFormat('yyyy-MM-dd');
-    // Get the total number of tasks
-
-
-    newTaskCount =tasks.where((task) => task.states == 'New').length;
-    completeTaskCount =tasks.where((task) => task.states == 'Done').length;
-    for (int i = 0; i < totalTaskCount; i++) {
-      if ((formatter.parse(tasks[i].endDate!).isBefore(now) &&
-          tasks[i].states != 'Done') ||
-          tasks[i].states != 'Archive'
-      ) {
-        inProgressTaskCount = inProgressTaskCount! + 1;
-      }
-      else if (formatter.parse(tasks[i].endDate!).isAfter(now) ||
-          tasks[i].states != 'Archive'
-      ) {
-        outDateTaskCount = outDateTaskCount! + 1;
+        emit(GetTaskSuccessState());
+      } catch (error) {
+        print(error);
+        emit(GetTaskErrorState());
       }
     }
   }
 
+  dashboardCalculate() {
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateFormat formatter = DateFormat('yyyy/MM/dd');
+    DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
+
+    // Get the total number of tasks
+
+
+    totalTaskCount =
+        totalTaskCount - tasks
+            .where((task) => task.states == 'Archive')
+            .length;
+
+    for (int i = 0; i < totalTaskCount; i++) {
+      String endDateString = tasks[i].endDate!.trim();
+      print(endDateString);
+      bool isMidnight = now.hour == 23 && now.minute == 59 && now.second == 59;
+
+      DateTime endDate = formatter.parse(endDateString);
+      bool isSameDay = endDate.year == now.year && endDate.month == now.month && endDate.day == now.day;
+
+
+      if (tasks[i].states != 'Archive') {
+
+        print(now.isBefore(endOfDay));
+        print(today);
+        print(endDate.isBefore(today));
+
+        if (tasks[i].states == 'New') {
+          print('newTaskCount');
+
+          if (endDate.isBefore(today) && !isSameDay) {
+            print('outDateTaskCount');
+
+            outDateTaskCount = outDateTaskCount! + 1;
+            continue;
+          }
+         else if  (
+
+              now.isBefore(endOfDay) && isSameDay
+          ) {
+            print('inProgressTaskCount');
+            newTaskCount = newTaskCount! + 1;
+             inProgressTaskCount = inProgressTaskCount! + 1;
+             continue;
+          }
+
+
+        }
 
 
 
 
+        if (tasks[i].states == 'Done') {
+          completeTaskCount = completeTaskCount! + 1;
+        }
+      }
+
+      }
+    print('newTaskCount$newTaskCount');
+    print('inProgressTaskCount$inProgressTaskCount');
+    }
 
 
 
 
+  filterItems({String? sortState}) async {
+    final Token = await storage.read(key: 'uid');
 
+    try {
+      final taskSnapshot = await FirebaseFirestore.instance
+          .collection('tasks')
+          .where('uid', isEqualTo: Token)
+          .where('states', isEqualTo: sortState)
+          .get();
+      taskSnapshot.docs.forEach((element) {
+        print(element.data());
+        tasks = [];
+        print(tasks);
+        tasks.add(PostModel.fromJson(element.data(), element.id));
 
-
-
-
-
-filterItems({String? sortState}) async {
-
-
-
-
-
-  final Token = await storage.read(key: 'uid');
-
-  try {
-    final taskSnapshot = await FirebaseFirestore.instance.collection('tasks')
-        .where('uid', isEqualTo: Token)
-        .where('states', isEqualTo: sortState)
-        .get();
-    taskSnapshot.docs.forEach((element) {
-      print(element.data());
-      tasks=[];
-      print (tasks);
-      tasks.add(PostModel.fromJson(element.data(), element.id));
-
-
-      emit(sortTaskSuccessState());
-
-    });
-
+        emit(sortTaskSuccessState());
+      });
     } catch (error) {
       print(error);
       emit(sortTaskErrorState());
     }
-
-
-
-
-
-}
-
-
-
+  }
 
   editTask({
     @required String? title,
     @required String? description,
     @required String? startDate,
     @required String? endDate,
-    String? states ,
+    String? states,
     @required String? taskId,
     String? image,
     // Add taskImageLink parameter
   }) async {
     emit(EditNewTaskLoading());
     Token = await storage.read(key: 'uid');
-print (states);
+    print(states);
     PostModel postmodel = PostModel(
       title: title,
       description: description,
@@ -278,33 +283,19 @@ print (states);
 
       emit(EditNewTaskError());
     }
-
-
   }
 
-
-
   dismiss() {
-
-
     taskImage = null;
     taskStates = '';
     taskId = '';
     taskImageLink = '';
 
-
-
-
     titleController.clear();
     descriptionController.clear();
     startDateController.clear();
     endDateController.clear();
-
-
-
-
   }
-
 
   void deleteTask({@required String? taskId}) async {
     emit(DeleteTaskLoadingState());
@@ -321,41 +312,25 @@ print (states);
     }
   }
 
-
-
-
-
-
-
-
-  changeLanguage( Locale locale) async {
+  changeLanguage(Locale locale) async {
     var storage = FlutterSecureStorage();
     await storage.write(key: 'languageCode', value: locale.languageCode);
     await storage.write(key: 'countryCode', value: locale.countryCode!);
     S.load(locale);
   }
-  bool isArabic (){
-    return Intl.getCurrentLocale() == 'ar_EG';
 
+  bool isArabic() {
+    return Intl.getCurrentLocale() == 'ar_EG';
   }
 
   void ChangeLanguageConndation() {
-    if(isArabic()){
-      changeLanguage( Locale('en', 'US'));
+    if (isArabic()) {
+      changeLanguage(Locale('en', 'US'));
       emit(ChangeLanguageSuccessState());
-    }else {
-      changeLanguage( Locale('ar', 'EG'));
+    } else {
+      changeLanguage(Locale('ar', 'EG'));
       emit(ChangeLanguageSuccessState());
     }
   }
-
-
-
-
-
-
-
-
-
-
 }
+

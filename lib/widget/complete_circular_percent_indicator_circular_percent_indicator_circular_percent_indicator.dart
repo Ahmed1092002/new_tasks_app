@@ -20,7 +20,7 @@ class CompleteCircularPercentIndicator extends StatelessWidget {
           radius: 110.0,
           lineWidth: 13.0,
           animation: true,
-          percent: (cubit.completeTaskCount! / cubit.tasks.length) ,
+          percent: (cubit.completeTaskCount! / cubit.totalTaskCount) ,
           animationDuration: 10,
           addAutomaticKeepAlive: true,
           animateFromLastPercent: true,
@@ -28,7 +28,7 @@ class CompleteCircularPercentIndicator extends StatelessWidget {
           center:
           OutdatesCircularPercentIndicator(),
           circularStrokeCap: CircularStrokeCap.round,
-          progressColor: Colors.greenAccent,
+          progressColor: Color(0xFF4CB050),
         );
       },
     );

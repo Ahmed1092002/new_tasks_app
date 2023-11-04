@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocListener(
       listeners: [
         BlocProvider(create: (context) => UserCubit()),
-        BlocProvider(create: (context) => TaskCubit()..getTaskData()),
+        BlocProvider(create: (context) => TaskCubit()),
       ],
       child: MaterialApp(
         localizationsDelegates: [

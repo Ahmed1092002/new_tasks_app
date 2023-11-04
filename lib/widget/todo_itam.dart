@@ -88,7 +88,7 @@ iconSize: 30,
                       ),
                       DateContainer(
                         iconDate: Icons.timer_off_outlined,
-                        date: startDate,
+                        date: endDate,
                       ),
                     ],
                   )

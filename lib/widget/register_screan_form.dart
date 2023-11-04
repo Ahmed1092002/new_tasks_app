@@ -45,6 +45,7 @@ class RegisterScreanForm extends StatelessWidget {
                 CustomTextField(
                   hint: 'name',
                   controller: cubit.nameController,
+                  icon: Icons.person,
                 ),
                 SizedBox(
                   height: 16,
@@ -52,6 +53,7 @@ class RegisterScreanForm extends StatelessWidget {
                 CustomTextField(
                   hint: 'email',
                   controller: cubit.emailController,
+                  icon: Icons.email,
 
                 ),
                 SizedBox(
@@ -60,6 +62,7 @@ class RegisterScreanForm extends StatelessWidget {
                 CustomTextField(
                   hint: 'password',
                   controller: cubit.passwordController,
+                  icon: Icons.lock,
                 ),
                 SizedBox(
                   height: 16,
@@ -76,6 +79,7 @@ class RegisterScreanForm extends StatelessWidget {
                           name: cubit.nameController.text,
                           email: cubit.emailController.text,
                           password: cubit.passwordController.text);
+                      
 
 
                       print('valid');

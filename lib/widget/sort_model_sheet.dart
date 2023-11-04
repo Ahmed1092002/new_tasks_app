@@ -50,7 +50,7 @@ class _SortModelSheetState extends State<SortModelSheet> {
     return CustomButton(
       buttonName: 'Apply Filter',
       onPressed: () {
-        cubit.filterItems(sortState:  cubit.taskStates);
+        cubit.filterItems(sortState:  cubit.sortState);
               Navigator.pop(context);
       },
     );

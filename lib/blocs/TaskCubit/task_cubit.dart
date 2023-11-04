@@ -194,7 +194,7 @@ class TaskCubit extends Cubit<TaskState> {
             print('outDateTaskCount');
 
             outDateTaskCount = outDateTaskCount! + 1;
-            continue;
+
           }
          else if  (
 
@@ -203,7 +203,6 @@ class TaskCubit extends Cubit<TaskState> {
             print('inProgressTaskCount');
             newTaskCount = newTaskCount! + 1;
              inProgressTaskCount = inProgressTaskCount! + 1;
-             continue;
           }
 
 

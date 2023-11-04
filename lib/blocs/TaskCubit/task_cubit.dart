@@ -146,7 +146,6 @@ class TaskCubit extends Cubit<TaskState> {
           tasks.add(PostModel.fromJson(element.data(), element.id));
         });
 
-        totalTaskCount = taskSnapshot.docs.length;
 
         dashboardCalculate();
 
@@ -164,18 +163,13 @@ class TaskCubit extends Cubit<TaskState> {
     DateFormat formatter = DateFormat('yyyy/MM/dd');
     DateTime endOfDay = DateTime(now.year, now.month, now.day, 23, 59, 59);
 
-    // Get the total number of tasks
 
+totalTaskCount = tasks.length;
 
-    totalTaskCount =
-        totalTaskCount - tasks
-            .where((task) => task.states == 'Archive')
-            .length;
 
     for (int i = 0; i < totalTaskCount; i++) {
       String endDateString = tasks[i].endDate!.trim();
       print(endDateString);
-      bool isMidnight = now.hour == 23 && now.minute == 59 && now.second == 59;
 
       DateTime endDate = formatter.parse(endDateString);
       bool isSameDay = endDate.year == now.year && endDate.month == now.month && endDate.day == now.day;
@@ -186,23 +180,30 @@ class TaskCubit extends Cubit<TaskState> {
         print(now.isBefore(endOfDay));
         print(today);
         print(endDate.isBefore(today));
+        if (tasks[i].states == 'Done') {
+          completeTaskCount = completeTaskCount! + 1;
+        }
+
 
         if (tasks[i].states == 'New') {
-          print('newTaskCount');
 
           if (endDate.isBefore(today) && !isSameDay) {
             print('outDateTaskCount');
 
             outDateTaskCount = outDateTaskCount! + 1;
+            continue;
+
 
           }
-         else if  (
+          if  (
 
               now.isBefore(endOfDay) && isSameDay
           ) {
             print('inProgressTaskCount');
+            print ("new task count $newTaskCount");
             newTaskCount = newTaskCount! + 1;
              inProgressTaskCount = inProgressTaskCount! + 1;
+             continue;
           }
 
 
@@ -211,14 +212,13 @@ class TaskCubit extends Cubit<TaskState> {
 
 
 
-        if (tasks[i].states == 'Done') {
-          completeTaskCount = completeTaskCount! + 1;
-        }
       }
 
       }
-    print('newTaskCount$newTaskCount');
-    print('inProgressTaskCount$inProgressTaskCount');
+    totalTaskCount =
+        totalTaskCount - tasks
+            .where((task) => task.states == 'Archive')
+            .length;
     }
 
 

@@ -145,41 +145,54 @@ class _AddTodoAppScreanFormState extends State<AddTodoAppScreanForm> {
             else
               CustomButton(
                 onPressed: () async {
-                  if (widget.pageName == addTask) {
-                    await cubit.uploadTaskImage();
+                  if (formKey.currentState!.validate()) {
+                    formKey.currentState!.save();
+                    if (widget.pageName == addTask) {
+                      await cubit.uploadTaskImage();
 
-                    try {
-                      await cubit.addTask(
-                        title: cubit.titleController.text,
-                        description: cubit.descriptionController.text,
-                        startDate: cubit.startDateController.text,
-                        endDate: cubit.endDateController.text,
-                        image: cubit.taskImageLink,
-                      );
-                      cubit.getTaskData();
-                    } catch (error) {
-                      // Handle error
-                      print(error);
+                      try {
+                        await cubit.addTask(
+                          title: cubit.titleController.text,
+                          description: cubit.descriptionController.text,
+                          startDate: cubit.startDateController.text,
+                          endDate: cubit.endDateController.text,
+                          image: cubit.taskImageLink,
+                        );
+                        cubit.getTaskData();
+                      } catch (error) {
+                        // Handle error
+                        print(error);
+                      }
+                      setState(() {
+                        autovalidateMode = AutovalidateMode.onUserInteraction;
+                      });
                     }
-                  } else if (widget.pageName == 'Edit Task') {
-                    await cubit.uploadTaskImage();
+                    else if (widget.pageName == 'Edit Task') {
+                      await cubit.uploadTaskImage();
 
-                    try {
-                      await cubit.editTask(
-                        title: cubit.titleController.text,
-                        description: cubit.descriptionController.text,
-                        startDate: cubit.startDateController.text,
-                        endDate: cubit.endDateController.text,
-                        states: cubit.taskStates,
-                        taskId: cubit.taskId,
-                        image: cubit.taskImageLink,
-                      );
-                      cubit.getTaskData();
-                    } catch (error) {
-                      // Handle error
-                      print(error);
+                      try {
+                        await cubit.editTask(
+                          title: cubit.titleController.text,
+                          description: cubit.descriptionController.text,
+                          startDate: cubit.startDateController.text,
+                          endDate: cubit.endDateController.text,
+                          states: cubit.taskStates,
+                          taskId: cubit.taskId,
+                          image: cubit.taskImageLink,
+                        );
+                        cubit.getTaskData();
+                      } catch (error) {
+                        // Handle error
+                        print(error);
+                      }
+                      setState(() {
+                        autovalidateMode = AutovalidateMode.onUserInteraction;
+                      });
                     }
+
+
                   }
+
                 },
                 buttonName: widget.pageName,
               )

@@ -43,7 +43,7 @@ class SpalshScrean extends StatelessWidget {
     return
 
       BlocProvider(
-        create: (context) => UserCubit()..getUserData(),
+        create: (context) => UserCubit(),
         child: BlocBuilder<UserCubit, UserState>(
           builder: (context, state) {
             return AnimatedSplashScreen.withScreenFunction(

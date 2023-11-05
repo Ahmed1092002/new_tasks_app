@@ -6,6 +6,8 @@ import 'package:new_todo_app/widget/custom_button.dart';
 import 'package:new_todo_app/widget/custom_text_field.dart';
 
 import '../blocs/RegisterCubit/register_cubit.dart';
+import '../blocs/TaskCubit/task_cubit.dart';
+import '../blocs/UserCubit/user_cubit.dart';
 
 
 class RegisterScreanForm extends StatelessWidget {
@@ -31,6 +33,8 @@ class RegisterScreanForm extends StatelessWidget {
             content: Text("success"),
             backgroundColor: Colors.green,
           ));
+          TaskCubit.get(context).getTaskData();
+          UserCubit.get(context).getUserData();
         navigateToScreenAndExit(context, DashboardTasks());
         }
 

@@ -32,7 +32,9 @@ class LoginForm extends StatelessWidget {
             content: Text("success"),
             backgroundColor: Colors.green,
           ));
+          UserCubit.get(context).getUserData();
 
+          TaskCubit.get(context).getTaskData();
           navigateToScreenAndExit(context, DashboardTasks());
 
         }      },

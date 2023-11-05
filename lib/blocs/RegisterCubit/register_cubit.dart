@@ -19,20 +19,7 @@ class RegisterCubit extends Cubit<RegisterState> {
 
   final storage = new FlutterSecureStorage();
 
-  //
-  // bool _isClosed = false;
-  //
-  // @override
-  // Future<void> close() {
-  //   _isClosed = true;
-  //   return super.close();
-  // }
-  //
-  // void _emit(RegisterState state) {
-  //   if (!_isClosed) {
-  //     emit(state);
-  //   }
-  // }
+
   register({required String email, required String password, required String name}) {
     if (state is! RegisterInitial) {
       throw Exception('Cannot emit new states after calling close');

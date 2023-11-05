@@ -11,11 +11,16 @@ import 'package:new_todo_app/widget/custom_text_field.dart';
 import 'package:new_todo_app/widget/dropdown_button_item.dart';
 import 'package:new_todo_app/widget/select_date_item.dart';
 
-class AddImageItem extends StatelessWidget {
+class AddImageItem extends StatefulWidget {
   AddImageItem({
     super.key,
   });
 
+  @override
+  State<AddImageItem> createState() => _AddImageItemState();
+}
+
+class _AddImageItemState extends State<AddImageItem> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<TaskCubit, TaskState>(
@@ -75,7 +80,36 @@ class AddImageItem extends StatelessWidget {
                   border: Border.all(
                     color: Color(0xFFE040FC),
                   )),
-              child: ImageComponent,
+              alignment: Alignment.center,
+              clipBehavior: Clip.hardEdge,
+
+
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+
+                  ImageComponent,
+                  if (cubit.taskImage != null || cubit.taskImageLink!.isNotEmpty)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+
+                        onPressed: () {
+
+                           setState(() {
+                             cubit.taskImage = null;
+                             cubit.taskImageLink = '';
+                           });
+
+                        },
+                        icon: Icon(
+                          Icons.remove_circle,
+                          color: Colors.red,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         );

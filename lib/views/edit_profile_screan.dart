@@ -25,7 +25,8 @@ GlobalKey<FormState> formKey = GlobalKey();
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Profile"),
+        title: Text("Edit Profile",style: TextStyle(color: Colors.white),),
+        centerTitle: true,
         iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Color(0xFFE040FC),
       ),

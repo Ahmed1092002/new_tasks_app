@@ -47,7 +47,9 @@ class ChangePasswordScrean extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Change Password"),
+                    Text("Change Password", style: TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),),
+
                     SizedBox(height: 20,),
 
                     CustomTextField(

@@ -8,6 +8,7 @@ import 'package:new_todo_app/blocs/UserCubit/user_cubit.dart';
 import 'package:new_todo_app/generated/assets.dart';
 import 'package:new_todo_app/views/dashboard_tasks.dart';
 
+import '../blocs/TaskCubit/task_cubit.dart';
 import 'login_screan.dart';
 
 // enum SplashTransition {
@@ -31,9 +32,22 @@ enum PageTransitionType {
   leftToRightWithFade,
 }
 
-class SpalshScrean extends StatelessWidget {
+class SpalshScrean extends StatefulWidget {
   SpalshScrean({Key? key}) : super(key: key);
 
+  @override
+  State<SpalshScrean> createState() => _SpalshScreanState();
+}
+
+class _SpalshScreanState extends State<SpalshScrean> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      TaskCubit.get(context).getTaskData();
+      UserCubit.get(context).getUserData();
+    });
+  }
   @override
   var Token;
 
@@ -52,11 +66,15 @@ class SpalshScrean extends StatelessWidget {
                 screenFunction: () async {
                   Token = await storage.read(key: 'uid');
 
-                  if (Token == null && FirebaseAuth.instance.currentUser==Token) {
+                  if (Token == null && FirebaseAuth.instance.currentUser == null) {
 
                     return LoginScrean();
                   }
                   else {
+                    // UserCubit.get(context).getUserData();
+                    //
+                    // TaskCubit.get(context).getTaskData();
+
 
                     return DashboardTasks();
                   }

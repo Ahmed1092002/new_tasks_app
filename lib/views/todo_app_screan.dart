@@ -35,7 +35,9 @@ class _TodoAppScreanState extends State<TodoAppScrean> {
   Widget build(BuildContext context) {
     return BlocConsumer<TaskCubit, TaskState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is GetTaskLoadingState) {
+          Center(child: CircularProgressIndicator());
+        }
       },
       builder: (context, state) {
 

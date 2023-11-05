@@ -31,14 +31,15 @@ class UserCubit extends Cubit<UserState> {
 
   getUserData()  async {
     token=await storage.read(key:'uid' );
+  if (token!=null) {
     print(token);
     emit(UserLoadingState());
-      print('User Loading State');
-      FirebaseAuth.instance.currentUser!.uid;
-     await FirebaseFirestore.instance
+    print('User Loading State');
+    FirebaseAuth.instance.currentUser!.uid;
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(      token
-     )
+    )
         .get()
         .then((value) {
       print(value.data());
@@ -48,7 +49,8 @@ class UserCubit extends Cubit<UserState> {
       print(error);
       emit(UserErrorState());
     });
-    print(user!.image);
+  }
+
   }
 
   Future<void> pickProfileImage() async {

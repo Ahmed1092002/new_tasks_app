@@ -34,11 +34,11 @@ class _AddTodoAppScreanFormState extends State<AddTodoAppScreanForm> {
 
     final firstDate = DateTime(now.year - 1, now.month, now.day);
     final DateTime? picked = await showDatePicker(
-
-        context: context,
-        initialDate: selectedDate,
-        firstDate: firstDate,
-        lastDate: DateTime(2101));
+      context: context,
+      initialDate: selectedDate.isBefore(firstDate) ? firstDate : selectedDate,
+      firstDate: firstDate,
+      lastDate: DateTime(2101),
+    );
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
@@ -113,8 +113,22 @@ class _AddTodoAppScreanFormState extends State<AddTodoAppScreanForm> {
                   ? 'Start Date'
                   : cubit.startDateController.text,
               onTap: () async {
-                cubit.startDateController.text =
-                    await _selectDate(context, startDate);
+                if (widget.pageName == addTask) {
+                  startDate = DateTime.now();
+                } else if (widget.pageName == 'Edit Task') {
+                  DateFormat format = DateFormat('yyyy/MM/dd');
+                  DateTime? parsedDate = format.parse(cubit.startDateController.text);
+                  if (parsedDate != null) {
+                    startDate = parsedDate;
+                  } else {
+                    // Handle the case when the parsing fails
+                    startDate = DateTime.now();
+                    print('Failed to parse start date');
+                    print('Value of cubit.startDateController.text: ${cubit.startDateController.text}');
+                    print('Error message: Invalid date format');
+                  }
+                }
+                cubit.startDateController.text = await _selectDate(context, startDate);
               },
             ),
             SizedBox(
@@ -126,6 +140,23 @@ class _AddTodoAppScreanFormState extends State<AddTodoAppScreanForm> {
                   ? 'End Date'
                   : cubit.endDateController.text,
               onTap: () async {
+                if (widget.pageName == addTask) {
+                  endDate = DateTime.now();
+                } else if (widget.pageName == 'Edit Task') {
+                  DateFormat format = DateFormat('yyyy/MM/dd');
+                  DateTime? parsedDate = format.parse( cubit.endDateController.text);
+                  if (parsedDate != null) {
+                    endDate = parsedDate;
+                  } else {
+                    // Handle the case when the parsing fails
+                    endDate = DateTime.now();
+                    print('Failed to parse start date');
+                    print('Value of cubit.startDateController.text: ${ cubit.endDateController.text}');
+                    print('Error message: Invalid date format');
+                  }
+                }
+
+
                 cubit.endDateController.text =
                     await _selectDate(context, endDate);
               },

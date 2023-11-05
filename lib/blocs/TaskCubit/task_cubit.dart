@@ -122,10 +122,7 @@ class TaskCubit extends Cubit<TaskState> {
   void getTaskData() async {
     Token = await storage.read(key: 'uid');
 
-    if (FirebaseAuth.instance.currentUser!.uid != Token) {
-      emit(GetTaskErrorState());
-      return;
-    } else {
+    if ( Token!= null && FirebaseAuth.instance.currentUser != null) {
       tasks = [];
       newTaskCount = 0;
       inProgressTaskCount = 0;

@@ -135,6 +135,7 @@ class TaskCubit extends Cubit<TaskState> {
         final taskSnapshot = await FirebaseFirestore.instance
             .collection('tasks')
             .where('uid', isEqualTo: Token)
+        .where('states', whereIn: [status.New.name.toString(),  status.Done.name.toString()])
             .get();
 
         taskSnapshot.docs.forEach((element) {
@@ -166,17 +167,16 @@ totalTaskCount = tasks.length;
 
     for (int i = 0; i < totalTaskCount; i++) {
       String endDateString = tasks[i].endDate!.trim();
-      print(endDateString);
-
+      String startDateString = tasks[i].startDate!.trim();
+      // DateTime futureDate = currentDate.add(Duration(days: 2));
       DateTime endDate = formatter.parse(endDateString);
-      bool isSameDay = endDate.year == now.year && endDate.month == now.month && endDate.day == now.day;
+      DateTime startDate = formatter.parse(startDateString);
+      bool isSameDay = startDate.year == now.year && startDate.month == now.month && startDate.day == now.day;
 
 
       if (tasks[i].states != 'Archive') {
 
-        print(now.isBefore(endOfDay));
-        print(today);
-        print(endDate.isBefore(today));
+
         if (tasks[i].states == 'Done') {
           completeTaskCount = completeTaskCount! + 1;
         }
@@ -184,24 +184,27 @@ totalTaskCount = tasks.length;
 
         if (tasks[i].states == 'New') {
 
-          if (endDate.isBefore(today) && !isSameDay) {
-            print('outDateTaskCount');
+          if (endDate.isBefore(today) ) {
 
             outDateTaskCount = outDateTaskCount! + 1;
-            continue;
+
 
 
           }
           if  (
 
-              now.isBefore(endOfDay) && isSameDay
+             ( now.isBefore(endOfDay) )
+          || (endDate.isBefore(today) )
           ) {
-            print('inProgressTaskCount');
-            print ("new task count $newTaskCount");
-            newTaskCount = newTaskCount! + 1;
              inProgressTaskCount = inProgressTaskCount! + 1;
-             continue;
+
           }
+          if (isSameDay   ) {
+
+            newTaskCount = newTaskCount! + 1;
+
+          }
+
 
 
         }
@@ -228,11 +231,14 @@ totalTaskCount = tasks.length;
       final taskSnapshot = await FirebaseFirestore.instance
           .collection('tasks')
           .where('uid', isEqualTo: Token)
-          .where('states', isEqualTo: sortState)
+          .where('states', isEqualTo: sortState )
+
+
           .get();
       taskSnapshot.docs.forEach((element) {
-        print(element.data());
         tasks = [];
+
+        print(element.data());
         print(tasks);
         tasks.add(PostModel.fromJson(element.data(), element.id));
 

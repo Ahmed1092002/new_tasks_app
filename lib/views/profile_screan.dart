@@ -33,112 +33,119 @@ class _ProfileScreanState extends State<ProfileScrean> {
       ),
       body: BlocConsumer<UserCubit, UserState>(
         listener: (context, state) {
-          if (state is ProfileImagePickedErrorState) {
-            UserCubit.get(context).getUserData();
-          }
+
         },
         builder: (context, state) {
 
 
           var cubit = UserCubit
               .get(context);
+return ConditionalBuilder(
+            condition: cubit != null,
+            builder: (context) {
+              return Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Stack(
+                          children: [
 
+                            Container(
+                              height: 300,
+                              width: 200,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: cubit.user!.image == null || cubit.user!.image == '' ? Image.asset(
+                                Assets.assetsStateAPILogo,
+                                fit: BoxFit.cover,
+                              ) :
 
-          if ( cubit == null) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+                              CachedNetworkImage(
+                                imageUrl: '${cubit.user!.image}',
+                                placeholder: (context, url) => CircularProgressIndicator(),
 
-          else if (state is UserSuccessState) {
-            return Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Stack(
-                        children: [
+                                errorWidget: (context, url, error) {
 
-                          Container(
-                            height: 300,
-                            width: 200,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                             clipBehavior: Clip.antiAliasWithSaveLayer,
-                            child: cubit.user!.image == null || cubit.user!.image == '' ? Image.asset(
-                              Assets.assetsStateAPILogo,
-                              fit: BoxFit.cover,
-                            ) :
+                                  return Icon(Icons.error);
+                                },
+                              ),
 
-                            CachedNetworkImage(
-                              imageUrl: '${cubit.user!.image}',
-                              placeholder: (context, url) => CircularProgressIndicator(),
-
-                              errorWidget: (context, url, error) {
-
-                                return Icon(Icons.error);
-                              },
                             ),
 
-                          ),
 
 
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          '${cubit.user!.fullName}',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          '${cubit.user!.email}',
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        CustomButton(
+                            buttonName: 'edit profile',
+                            onPressed: () {
 
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        '${cubit.user!.fullName}',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        '${cubit.user!.email}',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      CustomButton(
-                        buttonName: 'edit profile',
-                        onPressed: () {
-
-                          if (cubit.user!.image != null) {
-                            cubit.profileImageLink = cubit.user!.image!;
-                          }
-                          else if (cubit.profileImageLink != null && cubit.profileImageLink!.isNotEmpty) {
-                            cubit.profileImageLink = cubit.profileImageLink!;
-                          }
-                          else {
-                            cubit.profileImageLink = '';
-                          }
-                          cubit.fullNameController.text = cubit.user!.fullName!;
-                          cubit.emailController.text = cubit.user!.email!;
-                          print ('${cubit.user!.image}');
-                          print ('${cubit.user!.fullName}');
-                          print ('${cubit.user!.email}');
-                          print('${cubit.user!.uid}');
-                          navigateToScreen(context, EditProfileScrean());
-                        }
-                      )
-                    ],
+                              if (cubit.user!.image != null) {
+                                cubit.profileImageLink = cubit.user!.image!;
+                              }
+                              else if (cubit.profileImageLink != null && cubit.profileImageLink!.isNotEmpty) {
+                                cubit.profileImageLink = cubit.profileImageLink!;
+                              }
+                              else {
+                                cubit.profileImageLink = '';
+                              }
+                              cubit.fullNameController.text = cubit.user!.fullName!;
+                              cubit.emailController.text = cubit.user!.email!;
+                              print ('${cubit.user!.image}');
+                              print ('${cubit.user!.fullName}');
+                              print ('${cubit.user!.email}');
+                              print('${cubit.user!.uid}');
+                              navigateToScreen(context, EditProfileScrean());
+                            }
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
+              );
+
+            }
+            ,
+            fallback: (context) {
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+
+
+
+
+
+
           }
-          return Text('Profile');
-        },
+
       ),
     );
   }

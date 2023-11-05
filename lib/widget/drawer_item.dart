@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:new_todo_app/blocs/UserCubit/user_cubit.dart';
@@ -53,11 +54,10 @@ class _DrawerItemState extends State<DrawerItem> {
               },
               builder: (context, state) {
                 var cubit = UserCubit.get(context).user;
-                if (cubit == null) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is UserSuccessState) {
+
+                return ConditionalBuilder(condition: cubit != null,
+
+                    builder: (context) {
                   return Container(
                     child: Column(
                       children: [
@@ -69,10 +69,10 @@ class _DrawerItemState extends State<DrawerItem> {
 
                           ),
                           clipBehavior: Clip.hardEdge,
-                          child: cubit.image == null|| cubit.image == ''?
+                          child: cubit!.image == null|| cubit.image == ''?
                           Image.asset(Assets.assetsStateAPILogo)
-                          :
-                            CachedNetworkImage(
+                              :
+                          CachedNetworkImage(
                             imageUrl: '${cubit.image}',
                             fit: BoxFit.cover,
                             fadeInDuration: Duration(seconds: 1),
@@ -94,8 +94,14 @@ class _DrawerItemState extends State<DrawerItem> {
                       ],
                     ),
                   );
-                }
-                return Text('Profile');
+                    } ,
+                    fallback: (context) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                );
+
               },
             ),
           ),

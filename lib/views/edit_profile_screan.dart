@@ -43,6 +43,8 @@ GlobalKey<FormState> formKey = GlobalKey();
             );
             UserCubit.get(context).getUserData();
             navigateToScreen(context, ProfileScrean());
+
+
           }
           if (state is UserUpdateErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -142,6 +144,9 @@ GlobalKey<FormState> formKey = GlobalKey();
                       hint: 'Email',
                       icon: Icons.email,
                     ),
+                    if (state is UserUpdateLoadingState )
+                      CircularProgressIndicator()
+                    else
                     CustomButton(
                         buttonName: 'edit profile',
                         onPressed: () async {
@@ -164,7 +169,6 @@ await  cubitData.updateUserProfile(
                             email: cubitData.emailController.text,
                             profileImageLink: cubitData.profileImageLink,
                           );
-                          cubitData.getUserData();
 
                         })
                 ],
